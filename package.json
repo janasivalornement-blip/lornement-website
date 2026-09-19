@@ -1,0 +1,9 @@
+{
+  "name": "lornement-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "L'Ornement Fashion Jewels storefront with WhatsApp checkout",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
