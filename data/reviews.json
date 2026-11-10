@@ -1,0 +1,50 @@
+[
+  {
+    "id": "2833d11b-8e54-4381-b50c-d1dda7645202",
+    "name": "Suri",
+    "text": "Awesome products. Reasonable price",
+    "rating": 5,
+    "media": [
+      {
+        "url": "/review-media/69b12707-967a-4889-a406-1a7367dfe75b.mp4",
+        "type": "video/mp4",
+        "name": "video_20260222_190739.mp4"
+      }
+    ],
+    "status": "published",
+    "createdAt": "2026-11-10T12:14:35.791Z"
+  },
+  {
+    "id": "6922c4f5-9699-49bf-8771-4d92f0994d52",
+    "name": "Raj",
+    "text": "Good Collections",
+    "rating": 5,
+    "media": [
+      {
+        "url": "/review-media/636c7b94-18d2-42f2-8cda-2fd01b4bdf6f.jpg",
+        "type": "image/jpeg",
+        "name": "IMG_20260325_131039.jpg"
+      }
+    ],
+    "status": "published",
+    "createdAt": "2026-11-10T12:05:47.670Z"
+  },
+  {
+    "id": "df301eee-1602-49a9-bccf-06359990cd31",
+    "name": "Jana",
+    "text": "Lovely products",
+    "rating": 5,
+    "media": [],
+    "status": "published",
+    "createdAt": "2026-11-10T10:08:01.312Z"
+  },
+  {
+    "id": "825f5132-a37d-43d0-8226-1aaa1c6e0ce2",
+    "name": "Sivachandran",
+    "text": "Impressive Collections. Loved it.",
+    "rating": 5,
+    "media": [],
+    "status": "published",
+    "createdAt": "2026-11-09T11:38:12.128Z"
+  }
+]

@@ -1,1 +1,108 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Owner | L'Ornement</title><link rel="stylesheet" href="/admin.css"/></head><body><main class="admin-shell"><a class="back" href="/">← Storefront</a><div id="loginView" class="login-card"><div class="mark">L</div><p class="eyebrow">L'ORNEMENT OWNER SPACE</p><h1>Welcome back.</h1><p>Manage your edit and keep the catalogue fresh.</p><form id="loginForm"><label>Password<input id="password" type="password" required placeholder="Enter owner password"/></label><button>Unlock dashboard</button><p class="error" id="loginError"></p></form></div><div id="dashboard" hidden><div class="admin-head"><div><p class="eyebrow">OWNER DASHBOARD</p><h1>Your catalogue</h1></div><button class="outline" id="logout">Log out</button></div><div class="admin-grid"><section class="panel"><div class="panel-head"><div><p class="eyebrow">NEW PIECE</p><h2>Add a product</h2></div></div><form id="productForm"><label>Product name<input name="name" required placeholder="e.g. Pearl Drop Earrings"/></label><div class="two-col"><label>Category<select name="category" id="categorySelect"></select></label><label>Price (₹)<input name="price" type="number" min="1" required placeholder="850"/></label></div><label>Description<textarea name="description" rows="3" placeholder="A short note about the piece"></textarea></label><label>Image URLs <span class="hint">one per line</span><textarea name="imageUrls" rows="3" placeholder="https://..."></textarea></label><label>Or upload images <input id="imageFiles" type="file" accept="image/*" multiple /></label><div class="upload-preview" id="uploadPreview"></div><button class="solid">Add product</button><p class="form-message" id="productMessage"></p></form></section><section class="panel"><div class="panel-head"><div><p class="eyebrow">LIVE CATALOGUE</p><h2>Products</h2></div><span id="productCount"></span></div><div id="adminProducts" class="admin-products"></div></section><section class="panel categories-panel"><div class="panel-head"><div><p class="eyebrow">ORGANISE</p><h2>Categories</h2></div></div><form id="categoryForm" class="category-form"><input name="name" required placeholder="New category"/><button class="solid">Add</button></form><div id="adminCategories"></div></section></div></div></main><script src="/admin.js" defer></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Owner | L'Ornement</title>
+  <link rel="stylesheet" href="/admin.css" />
+</head>
+<body>
+  <header class="admin-topbar">
+    <a class="admin-brand" href="/"><span class="admin-brand-mark">L</span><span><strong>L'Ornement</strong><small>OWNER STUDIO</small></span></a>
+    <a class="store-link" href="/">View storefront <span aria-hidden="true">↗</span></a>
+  </header>
+  <main class="admin-shell">
+    <div id="loginView" class="login-card">
+      <div class="mark">L</div>
+      <p class="eyebrow">L'ORNEMENT OWNER SPACE</p>
+      <h1>Welcome back.</h1>
+      <p>Manage your edit and keep the catalogue fresh.</p>
+      <form id="loginForm">
+        <label>Password<input id="password" type="password" required placeholder="Enter owner password" autocomplete="current-password" /></label>
+        <button class="solid">Unlock dashboard <span aria-hidden="true">→</span></button>
+        <p class="error" id="loginError" role="status"></p>
+      </form>
+    </div>
+    <div id="dashboard" hidden>
+      <section class="dashboard-welcome">
+        <div class="admin-head">
+          <div><p class="eyebrow">OWNER STUDIO · VILLIANUR</p><h1>A lovely day to <em>create.</em></h1><p class="admin-subtitle">Everything you need to keep your store looking its best.</p></div>
+          <button class="outline" id="logout" type="button">Log out</button>
+        </div>
+        <nav class="admin-nav" aria-label="Dashboard sections">
+          <a href="#products">Products</a><a href="#categories">Categories</a><a href="#reviewsPanel">Reviews</a><a href="#settingsPanel">Settings</a>
+        </nav>
+      </section>
+      <div class="admin-stats" aria-label="Store overview">
+        <article class="stat-card"><span class="stat-icon">✦</span><div><small>Products</small><strong id="productStat">—</strong></div></article>
+        <article class="stat-card"><span class="stat-icon">◇</span><div><small>Categories</small><strong id="categoryStat">—</strong></div></article>
+        <article class="stat-card"><span class="stat-icon">♡</span><div><small>Customer reviews</small><strong id="reviewStat">—</strong></div></article>
+      </div>
+      <div class="admin-grid">
+        <section class="panel product-form-panel" id="productEditor">
+          <div class="panel-head"><div><p class="eyebrow">YOUR NEXT BESTSELLER</p><h2 id="productFormTitle">Add a product</h2><p class="panel-description">Add the details and a clear photo to feature a new piece.</p></div><span class="panel-icon">✳</span></div>
+          <form id="productForm">
+            <label>Product name<input name="name" required maxlength="160" placeholder="e.g. Pearl Drop Earrings" /></label>
+            <div class="two-col">
+              <label>Category<select name="category" id="categorySelect" required></select></label>
+              <label>Price <span class="field-unit">(₹)</span><input name="price" type="number" min="1" step="1" required placeholder="850" /></label>
+            </div>
+            <label>Description <span class="field-unit">Optional</span><textarea name="description" rows="3" maxlength="1200" placeholder="What makes this piece special?"></textarea></label>
+            <label class="upload-label" for="imageFiles">Product photos <span class="field-unit">Up to 8 · JPG, PNG, WebP</span><input id="imageFiles" type="file" accept="image/*" multiple /><small id="imageHelp" class="field-help">Photos are optimized automatically. While editing, remove existing photos or add more; keep up to 8 photos total.</small></label>
+            <div class="upload-preview" id="uploadPreview"></div>
+            <div class="existing-images" id="existingImages" hidden></div>
+            <div class="form-actions"><button class="solid" id="productSubmit" type="submit">Add product <span aria-hidden="true">→</span></button><button class="outline" id="cancelEdit" type="button" hidden>Cancel edit</button></div>
+            <p class="form-message" id="productMessage" role="status"></p>
+          </form>
+        </section>
+        <section class="panel catalogue-panel" id="products">
+          <div class="panel-head"><div><p class="eyebrow">IN YOUR SHOP</p><h2>Product catalogue</h2><p class="panel-description">Edit details or remove pieces that have sold out.</p></div><span class="count-pill" id="productCount"></span></div>
+          <label class="search-wrap"><span aria-hidden="true">⌕</span><input id="adminSearch" type="search" placeholder="Search name, code, or category" aria-label="Search products" /></label>
+          <div id="adminProducts" class="admin-products"></div>
+        </section>
+        <section class="panel categories-panel" id="categories">
+          <div class="panel-head"><div><p class="eyebrow">KEEP IT ORGANISED</p><h2>Categories</h2><p class="panel-description">Group similar pieces so customers can browse easily.</p></div><span class="panel-icon">◇</span></div>
+          <form id="categoryForm" class="category-form">
+            <label>New subcategory<input name="name" required maxlength="80" placeholder="e.g. Pearl Earrings" /></label>
+            <label>Parent category<select name="group" id="categoryGroupSelect" required aria-label="Parent category"></select></label>
+            <button class="solid">Add category <span aria-hidden="true">+</span></button>
+          </form>
+          <div id="adminCategories"></div>
+        </section>
+        <section class="panel reviews-panel" id="reviewsPanel">
+          <div class="panel-head"><div><p class="eyebrow">CUSTOMER LOVE</p><h2>Reviews</h2><p class="panel-description">Share lovely customer stories with everyone.</p></div><span class="count-pill" id="adminReviewCount"></span></div>
+          <form id="adminReviewForm">
+            <div class="two-col">
+              <label>Customer name<input name="name" required maxlength="80" placeholder="Customer name" /></label>
+              <label>Rating<select name="rating" required><option value="5">★★★★★ (5)</option><option value="4">★★★★☆ (4)</option><option value="3">★★★☆☆ (3)</option><option value="2">★★☆☆☆ (2)</option><option value="1">★☆☆☆☆ (1)</option></select></label>
+            </div>
+            <label>Review<textarea name="text" required maxlength="1200" rows="3" placeholder="What did they love?"></textarea></label>
+            <label>Photos or video <span class="field-unit">Up to 4 files</span><input id="adminReviewMedia" name="media" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime" multiple /></label>
+            <div id="adminReviewMediaPreview" class="review-media-preview"></div>
+            <button class="solid">Add customer review <span aria-hidden="true">→</span></button>
+            <p class="form-message" id="adminReviewMessage" role="status"></p>
+          </form>
+          <div id="adminReviews" class="admin-reviews"></div>
+        </section>
+        <section class="panel settings-panel" id="settingsPanel">
+          <div class="panel-head"><div><p class="eyebrow">STORE APPEARANCE</p><h2>Storefront visuals</h2><p class="panel-description">Keep the first impression fresh and on-brand.</p></div><span class="panel-icon">✳</span></div>
+          <form id="heroImageForm">
+            <label>Hero visual image <span class="field-unit">JPG, PNG, WebP</span><input id="heroImageFile" type="file" accept="image/jpeg,image/png,image/webp" /><small class="field-help">Choose a new image for the main storefront hero. It will be optimized before saving.</small></label>
+            <div class="hero-image-preview-wrap"><img id="heroImagePreview" class="hero-image-preview" alt="Current storefront hero image preview" hidden /><span id="heroImagePreviewEmpty" class="field-help">No custom hero image is saved. The storefront default remains in use.</span></div>
+            <button class="solid" id="saveHeroImage" type="submit" disabled>Save hero image <span aria-hidden="true">→</span></button>
+            <p class="form-message" id="heroImageMessage" role="status"></p>
+          </form>
+          <div class="settings-divider"></div>
+          <div class="panel-head settings-subhead"><div><p class="eyebrow">READY TO CHAT</p><h2>WhatsApp checkout</h2><p class="panel-description">Customers use this number to place their orders.</p></div><span class="panel-icon">↗</span></div>
+          <form id="shopForm">
+            <label>WhatsApp number <span class="field-unit">Include country code</span><input id="whatsappNumber" name="whatsapp" type="tel" required placeholder="917845033001" /></label>
+            <button class="solid">Save number <span aria-hidden="true">→</span></button>
+            <p class="form-message" id="shopMessage" role="status"></p>
+          </form>
+        </section>
+      </div>
+    </div>
+  </main>
+  <script src="/admin.js" defer></script>
+</body>
+</html>

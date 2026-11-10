@@ -1,34 +1,31 @@
-$projectPath = (Split-Path $PSScriptRoot -Parent).TrimEnd('\')
-$port = 6754
+. (Join-Path $PSScriptRoot 'common.ps1')
 
-$processIds = @(
-    Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue |
-        Select-Object -ExpandProperty OwningProcess
-)
-
-if (-not $processIds) {
-    $processIds = @(
-        Get-CimInstance Win32_Process -Filter "Name = 'node.exe'" -ErrorAction SilentlyContinue |
-            Where-Object { $_.CommandLine -and $_.CommandLine -match '(?i)(^|[\\/ ])server\.js([\\" ]|$)' -and $_.CommandLine -like "*$projectPath*" } |
-            Select-Object -ExpandProperty ProcessId
-    )
-}
-
-$processIds = @($processIds | Sort-Object -Unique)
-if (-not $processIds) {
-    Write-Host "Website is not running."
+$processIds = Get-WebsiteListeners
+if ($processIds.Count -eq 0) {
+    Write-Host "Website is not running on port $script:Port."
     exit 0
 }
 
-foreach ($processId in $processIds) {
-    Write-Host "Stopping website process ID $processId"
-    Stop-Process -Id $processId -Force -ErrorAction Stop
+$processes = foreach ($processId in $processIds) {
+    $process = Get-WebsiteProcessInfo -ProcessId $processId
+    if (-not (Test-WebsiteProcess -Process $process)) {
+        Write-Error "Refusing to stop PID ${processId}: it owns port $script:Port but is not identifiable as this website's Node.js server."
+        exit 1
+    }
+    $process
 }
 
-Start-Sleep -Milliseconds 300
-if (Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue) {
-    Write-Error "Website is still listening on port $port."
+foreach ($process in $processes) {
+    Write-Host "Stopping website process ID $($process.ProcessId)"
+    Stop-Process -Id $process.ProcessId -ErrorAction Stop
+}
+
+for ($attempt = 0; $attempt -lt 10 -and (Get-WebsiteListeners).Count -gt 0; $attempt++) {
+    Start-Sleep -Milliseconds 300
+}
+if ((Get-WebsiteListeners).Count -gt 0) {
+    Write-Error "Website is still listening on port $script:Port."
     exit 1
 }
 
-Write-Host "Website stopped."
+Write-Host 'Website stopped. Startup remains enabled; use scripts\remove-startup.ps1 to disable automatic startup.'
